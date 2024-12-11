@@ -17,4 +17,7 @@ spring:
     url: jdbc:mysql://localhost:3306/example
 server:
   port: 8080
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
 
