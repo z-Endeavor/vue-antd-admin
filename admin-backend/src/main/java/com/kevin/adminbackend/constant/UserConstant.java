@@ -1,7 +1,7 @@
 package com.kevin.adminbackend.constant;
 
 /**
- * 用户登录
+ * 用户常量
  *
  * @author kevin
  */
