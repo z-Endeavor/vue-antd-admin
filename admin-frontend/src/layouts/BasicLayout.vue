@@ -16,11 +16,11 @@
 import GlobalHeader from "@/components/GlobalHeader.vue";
 
 // 测试代码
-import { getCurrentUser } from "@/api/user";
+// import { getCurrentUser } from "@/api/user";
 
-getCurrentUser().then((res) => {
-  console.log(res);
-});
+// getCurrentUser().then((res) => {
+//   console.log(res);
+// });
 </script>
 
 <style scoped>
