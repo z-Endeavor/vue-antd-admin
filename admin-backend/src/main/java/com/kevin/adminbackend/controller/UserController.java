@@ -58,6 +58,14 @@ public class UserController {
         return userService.userLogin(userAccount, userPassword, request);
     }
 
+    @PostMapping("/logout")
+    public BaseResponse<Integer> userLogout(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return userService.userLogout(request);
+    }
+
     /**
      * 获取当前用户
      *

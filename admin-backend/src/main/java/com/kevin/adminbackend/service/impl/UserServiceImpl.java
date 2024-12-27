@@ -140,4 +140,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setUserRole(originUser.getUserRole());
         return safetyUser;
     }
+
+    /**
+     * 用户注销
+     *
+     * @param request 请求
+     */
+    @Override
+    public int userLogout(HttpServletRequest request) {
+        // 移除登录态
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return 1;
+    }
 }
