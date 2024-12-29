@@ -75,8 +75,9 @@ const handleSumbit = async (values: any) => {
       path: "/",
       replace: true,
     });
+  } else {
+    message.error("登录失败, " + res.data.description);
   }
-  console.log("Success:", values);
 };
 </script>
 <style scoped>
