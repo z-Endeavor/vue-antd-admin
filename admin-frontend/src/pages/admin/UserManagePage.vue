@@ -1,27 +1,30 @@
 <template>
   <div id="userManagePage">
     <a-input-search
-      v-model="searchValue"
-      size="large"
+      style="max-width: 320px; margin-bottom: 20px"
+      v-model:value="searchValue"
+      placeholder="输入用户名搜索"
       enter-button="搜索"
-      placeholder="请输入用户名"
-      style="max-width: 320px"
+      size="large"
       @search="onSearch"
     />
     <a-table :columns="columns" :data-source="data">
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'userRole'">
-          <div v-if="record.userRole === 'admin'">
+        <template v-if="column.dataIndex === 'avatarUrl'">
+          <a-image :src="record.avatarUrl" :width="120" />
+        </template>
+        <template v-else-if="column.dataIndex === 'userRole'">
+          <div v-if="record.userRole === 1">
             <a-tag color="green">管理员</a-tag>
           </div>
           <div v-else>
             <a-tag color="blue">普通用户</a-tag>
           </div>
         </template>
-        <template v-if="column.dataIndex === 'createTime'">
+        <template v-else-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
         </template>
-        <template v-if="column.key === 'action'">
+        <template v-else-if="column.key === 'action'">
           <a-button danger @click="doDelete(record.id)">删除</a-button>
         </template>
       </template>
@@ -29,10 +32,31 @@
   </div>
 </template>
 <script lang="ts" setup>
-import dayjs from "dayjs";
-import { message } from "ant-design-vue";
-import { ref } from "vue";
 import { searchUsers, deleteUser } from "@/api/user";
+import { message } from "ant-design-vue";
+import dayjs from "dayjs";
+import { ref } from "vue";
+
+const searchValue = ref("");
+
+const onSearch = () => {
+  // 执行搜索获取数据
+  fetchData(searchValue.value);
+};
+
+//删除数据
+const doDelete = async (id: string) => {
+  if (!id) {
+    return;
+  }
+  const res = await deleteUser(id);
+  if (res.data.code === 0) {
+    message.success("删除成功");
+    fetchData(searchValue.value);
+  } else {
+    message.error("删除失败");
+  }
+};
 
 const columns = [
   {
@@ -41,11 +65,11 @@ const columns = [
   },
   {
     title: "用户名",
-    dataIndex: "nickname",
+    dataIndex: "username",
   },
   {
     title: "账号",
-    dataIndex: "username",
+    dataIndex: "userAccount",
   },
   {
     title: "头像",
@@ -64,81 +88,22 @@ const columns = [
     dataIndex: "userRole",
   },
   {
-    title: "Action",
+    title: "操作",
     key: "action",
   },
 ];
 
-const data = [
-  {
-    id: "1",
-    nickname: "John Brown",
-    username: "zkczdd",
-    avatarUrl: "New York No. 1 Lake Park",
-    gender: "男",
-    createTime: "2022-01-01",
-    userRole: "admin",
-  },
-  {
-    id: "2",
-    nickname: "Jim Green",
-    username: "zkczdd1",
-    avatarUrl: "New York No. 1 Lake Park",
-    gender: "女",
-    createTime: "2022-02-02",
-    userRole: "admin",
-  },
-  {
-    id: "3",
-    nickname: "Joe Black",
-    username: "zkczdd2",
-    avatarUrl: "New York No. 1 Lake Park",
-    gender: "男",
-    createTime: "2022-03-03",
-    userRole: "admin",
-  },
-  {
-    id: "4",
-    nickname: "Jim Red",
-    username: "zkczdd3",
-    avatarUrl: "New York No. 1 Lake Park",
-    gender: "女",
-    createTime: "2022-04-04",
-    userRole: "user",
-  },
-];
+// 数据
+const data = ref([]);
 
-const searchValue = ref("");
-const onSearch = () => {
-  // fetchData(searchValue.value);
-  console.log(searchValue.value);
-};
-// 从后端获取数据
-// // 用户数据
-// const data = ref([]);
-// // 获取数据
-// const fetchData = async (username = "") => {
-//   const res = await searchUsers(username);
-// 	if (res.data.data) {
-// 		data.value = res.data.data || [];
-// 	} else {
-// 		message.error("获取数据失败");
-// 	}
-// }
-// fetchData()
-
-//删除数据
-const doDelete = async (id: string) => {
-  if (!id) {
-    return;
-  }
-  const res = await deleteUser(id);
-  if (res.data.code === 0) {
-    message.success("删除成功");
-    // 刷新数据
-    // fetchData(searchValue.value);
+const fetchData = async (username = "") => {
+  const res = await searchUsers(username);
+  if (res.data.data) {
+    data.value = res.data.data;
   } else {
-    message.error("删除失败");
+    message.error("获取用户数据失败");
   }
 };
+
+fetchData();
 </script>
